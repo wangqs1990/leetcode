@@ -83,6 +83,7 @@ public:
     }
     return head;
   }
+  /*
   //make it merge short
   ListNode *sortList(ListNode *head) {
     ListNode *pFirst = head , *pSecond, *pEnd = NULL, *pHead;
@@ -105,5 +106,74 @@ public:
     }
     second = first->next;
     first->next = NULL;
+  }*/
+
+  ListNode *sortList(ListNode *head) {
+    ListNode *pFirst , *pSecond, *pNext, *prevEnd, *pHead;
+    
+    int length = 0, tmp;
+
+    if (head == NULL || head->next == NULL) {
+      return head;
+    }
+    
+    pSecond = head;
+
+    while (pSecond != NULL) {
+      length++;
+      pSecond = pSecond->next;
+    }
+
+    for (int i = 1; i < length; i+=i) {
+      pFirst = head;
+      this->splice(pFirst, pSecond, pNext, i);
+      head = this->merge(pFirst, pSecond);
+      prevEnd = head;
+      //find the last node
+      while (prevEnd->next != NULL) {
+        prevEnd = prevEnd->next;
+      }
+      pFirst = pNext;
+      while (pFirst != NULL) {
+        this->splice(pFirst, pSecond, pNext, i);
+        if (pSecond == NULL) {
+          prevEnd->next = pFirst;
+          break;
+        }
+        pHead = prevEnd->next = this->merge(pFirst, pSecond);
+        pFirst = pNext;
+        while (prevEnd->next != NULL) {
+          prevEnd = prevEnd->next;
+        }
+      }
+    }
+
+    return head;
+  }
+
+  //splice a list into three list
+  void splice(ListNode *&left,
+              ListNode *&right,
+              ListNode *&next,
+              int length) {
+    ListNode *first = left, *second;
+    int tmp = length;
+    while (--tmp && first->next != NULL) {
+      first = first->next;
+    }
+    right = first->next;
+    if (right == NULL ) {
+      next = NULL;
+      right = NULL;
+      return ;
+    }
+    first->next = NULL;
+    second = right;
+    tmp = length;
+    while (--tmp && second->next != NULL) {
+      second = second->next;
+    }
+    next = second->next;
+    second->next = NULL;
   }
 };
